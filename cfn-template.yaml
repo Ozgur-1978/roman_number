@@ -11,10 +11,10 @@ Parameters:
   instanceType:
     Description: Choose your instance type
     Type: String
+    Default: t2.micro
     AllowedValues:
       - t2.micro
-      - t3.micro
-      - t2.large
+  
   KeyName:
     Description: Choose your keypair
     Type: AWS::EC2::KeyPair::KeyName
