@@ -18,12 +18,35 @@ Parameters:
   KeyName:
     Description: Choose your keypair
     Type: AWS::EC2::KeyPair::KeyName
+
 Resources:
-WebServerHost:
+
+
+
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Enable HTTP for Flask Web Server and SSH port to secure reach to my EC2
+      GroupName: osvaldo-roman-number-converter
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp #required
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  WebServerHost:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref LatestAmiId
-      InstanceType: t2.micro
+      InstanceType: !Ref instanceType
       KeyName: !Ref KeyName
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
@@ -37,19 +60,17 @@ WebServerHost:
         dnf install python3-pip -y
         pip3 install flask
         dnf install git -y
-        FOLDER="https://raw.githubusercontent.com/Ozgur-1978/roman_number/main/templates"
+        FOLDER="https://raw.githubusercontent.com/awsdevopsteam/roman-number-conventer/master"
         cd /home/ec2-user
-        wget -P templates ${FOLDER}/index.html
-        wget -P templates ${FOLDER}/result.html
-        wget https://raw.githubusercontent.com/awsdevopsteam/roman-number-conventor/master/roman-numerals-converter-app.py
+        wget -P templates ${FOLDER}/templates/index.html
+        wget -P templates ${FOLDER}/templates/result.html
+        wget ${FOLDER}/roman-numerals-converter-app.py
         python3 roman-numerals-converter-app.py
+
+
 Outputs: 
-
-
-
-
-
-
-
-
-
+  WebsiteURL:
+    Value: !Sub 
+      - http://${PIA}
+      - PIA: !GetAtt WebServerHost.PublicDnsName
+    Description: Roman Numerals Converter Application URL
