@@ -11,6 +11,7 @@ Parameters:
   instanceType:
     Description: Choose your instance type
     Type: String
+    instanceType: t2.micro
     AllowedValues:
       - t2.micro
       - t3.micro
